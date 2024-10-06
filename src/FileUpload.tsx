@@ -2,7 +2,7 @@ import * as React from 'react'
 import useFileUpload from './hooks/useFileUpload';
 
 const FileUpload = () => {
-    const {image, handlePreview} = useFileUpload();
+    const {image, handlePreview, handleSubmit} = useFileUpload();
 
     return (
         <div>
@@ -12,9 +12,9 @@ const FileUpload = () => {
             onChange={handlePreview}
             ></input>
 
-            <img width={'100%'}
-            src={image}
-            />
+            {image && <img width={'80%'} src={URL.createObjectURL(image)} alt="preview" />}
+
+            <button onClick={handleSubmit}>예측하기</button>
         </div>
     )
 }
