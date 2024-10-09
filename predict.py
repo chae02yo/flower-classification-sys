@@ -11,6 +11,8 @@ model = tf.keras.models.load_model('flower_classification_model.h5')
 
 class_names = ['동백꽃', '달맞이꽃', '목련']
 
+CONFIDENCE_THRESHOLD = 0.7
+
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
@@ -20,20 +22,30 @@ def predict():
     img_bytes = file.read()
     img = Image.open(io.BytesIO(img_bytes))
 
+    if img.mode == 'RGBA':
+        img = img.convert('RGB')
+
     img = img.resize((224, 224))
-    img_array = np.array(img)
+    img_array = np.array(img) / 255.0 # 픽셀 값 정규화
     img_array = np.expand_dims(img_array, axis=0)
 
     predictions = model.predict(img_array)
     predicted_index = np.argmax(predictions[0]) # 가장 높은 예측 값을 가진 클래스 인덱스 추출
+    predicted_confidence = np.max(predictions[0])
 
-    predicted_class = class_names[predicted_index]
+    if predicted_confidence < CONFIDENCE_THRESHOLD:
+        result = {
+            'message': '꽃이 아닌 이미지입니다.',
+            'confidence': str(predicted_confidence)
+        }
+    else:
+        predicted_class = class_names[predicted_index]
 
-    result = {
-        'predictions': predictions.tolist(),
-        'predicted_class': predicted_class
-    }
-
+        result = {
+            'predictions': predictions.tolist(),
+            'predicted_class': predicted_class,
+            'confidence': str(predicted_confidence)
+        }
 
     return jsonify(result)
 
