@@ -1,14 +1,14 @@
 import axios from "axios";
 import * as React from "react";
 
-interface userFileUploadReturnType {
+interface useFileUploadReturnType {
     image: any;
 
     handlePreview: (e: any) => void;
     handleSubmit: () => void;
 }
 
-const useFileUpload: () => userFileUploadReturnType = () => {
+const useFileUpload: () => useFileUploadReturnType = () => {
     const [image, setImage]: any = React.useState(null);
     const [prediction, setPrediction] = React.useState('');
 
