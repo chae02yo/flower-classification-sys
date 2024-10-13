@@ -1,39 +1,23 @@
 import axios from "axios";
 import * as React from "react";
 
-interface useFileUploadReturnType {
-    image: any;
+interface useFileUploadProps {
+    image: File | null;
+}
 
-    handlePreview: (e: any) => void;
+interface useFileUploadReturnType {
     handleSubmit: () => void;
 }
 
-const useFileUpload: () => useFileUploadReturnType = () => {
-    const [image, setImage]: any = React.useState(null);
-    const [prediction, setPrediction] = React.useState('');
-
-    const handlePreview = (e: any) => {
-        const file = e.target.files[0];
-        setImage(file);
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        return new Promise<void>((resolve) => {
-            reader.onload = () => {
-                resolve();
-            }
-        });
-    };
-
+const useFileUpload = (props: useFileUploadProps): useFileUploadReturnType => {
     const handleSubmit = () => {
-        if (!image) {
+        if (!props.image) {
             alert("이미지를 선택해주세요.");
             return;
         }
 
         const formData = new FormData();
-        formData.append('file', image);
+        formData.append('file', props.image);
 
         axios.post('/api/predict', formData, {
             headers: {
@@ -42,7 +26,6 @@ const useFileUpload: () => useFileUploadReturnType = () => {
         })
         .then((res) => {
             console.log(res.data);
-            setPrediction(res.data.predictions);
         })
         .catch((error) => {
             console.error('Error upload file: ', error)
@@ -50,9 +33,6 @@ const useFileUpload: () => useFileUploadReturnType = () => {
     }
 
     return {
-        image,
-
-        handlePreview,
         handleSubmit,
     }
 }
