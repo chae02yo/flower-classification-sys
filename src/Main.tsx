@@ -8,6 +8,7 @@ const Main: React.FC = () => {
     return (
         <div>
             <FileUpload setImage={setImage} image={image} />
+            <PredictFeedbackRequest image={image} />
         </div>
     )
 }
