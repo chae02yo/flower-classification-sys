@@ -6,10 +6,14 @@ interface useFileUploadProps {
 }
 
 interface useFileUploadReturnType {
+    text: string;
+    setText: React.Dispatch<React.SetStateAction<string>>;
     handleSubmit: () => void;
 }
 
 const useFileUpload = (props: useFileUploadProps): useFileUploadReturnType => {
+    const [text, setText] = React.useState('');
+    
     const handleSubmit = () => {
         if (!props.image) {
             alert("이미지를 선택해주세요.");
@@ -25,6 +29,7 @@ const useFileUpload = (props: useFileUploadProps): useFileUploadReturnType => {
             },
         })
         .then((res) => {
+            setText(res.data.predicted_class);
             console.log(res.data);
         })
         .catch((error) => {
@@ -33,6 +38,8 @@ const useFileUpload = (props: useFileUploadProps): useFileUploadReturnType => {
     }
 
     return {
+        text,
+        setText,
         handleSubmit,
     }
 }
